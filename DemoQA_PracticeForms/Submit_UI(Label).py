@@ -2,7 +2,6 @@ import unittest
 
 from playwright.sync_api import sync_playwright
 
-
 EXPECTED_LABELS = {
     "Student Name",
     "Student Email",
@@ -46,11 +45,16 @@ class SubmitUITest(unittest.TestCase):
 
                 missing_labels = EXPECTED_LABELS - displayed_labels
 
+                if not missing_labels:
+                    print("Passed")
+                else:
+                    print("Failed")
+
                 self.assertFalse(
                     missing_labels,
-                    f"Labels missing from the submission modal: "
-                    f"{sorted(missing_labels)}",
+                    f"Labels missing from the submission modal: {sorted(missing_labels)}",
                 )
+
             finally:
                 browser.close()
 
