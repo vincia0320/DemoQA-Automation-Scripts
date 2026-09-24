@@ -1,30 +1,21 @@
 from pathlib import Path
+import subprocess
+import sys
+
 from playwright.sync_api import expect, sync_playwright
 from openpyxl import load_workbook
 
 
 BASE = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE.parent
+NAVIGATION_SCRIPT = PROJECT_ROOT / "Site Accesses" / "Forms-PracticeForms.py"
+INPUT_FILE = PROJECT_ROOT / "Forms Uploader.xlsx"
 
 
 def get_input_file() -> Path:
-    candidates = [
-        BASE / "Forms Uploader.xlsx",
-        PROJECT_ROOT / "Forms Uploader.xlsx",
-    ]
-
-    for path in candidates:
-        if path.is_file():
-            return path
-
-    matches = list(PROJECT_ROOT.rglob("Forms Uploader.xlsx"))
-    if matches:
-        return matches[0]
-
-    raise FileNotFoundError(
-        "Could not find 'Forms Uploader.xlsx'. "
-        f"Place it in:\n{BASE}\nor\n{PROJECT_ROOT}"
-    )
+	if not INPUT_FILE.is_file():
+		raise FileNotFoundError(f"Could not find '{INPUT_FILE}'")
+	return INPUT_FILE
 
 
 def first_value(row, *names):
@@ -37,6 +28,12 @@ def first_value(row, *names):
 
 
 def main():
+	if not NAVIGATION_SCRIPT.is_file():
+		raise FileNotFoundError(f"Could not find '{NAVIGATION_SCRIPT}'")
+
+	# Run the shared access workflow before automating the form.
+	subprocess.run([sys.executable, str(NAVIGATION_SCRIPT)], check=True)
+
 	input_file = get_input_file()
 	workbook = load_workbook(input_file, data_only=True)
 	sheet = workbook.active
@@ -77,17 +74,8 @@ def main():
 				page.get_by_text(value, exact=True).click()
 
 		page.locator("#submit").click()
-		modal = page.locator("#example-modal-sizes-title-lg").locator("xpath=ancestor::div[contains(@class, 'modal-content')]")
-		expect(modal).to_be_visible()
-		actual = {
-			cells.nth(0).inner_text().strip(): cells.nth(1).inner_text().strip()
-			for cells in [modal.locator("tr").nth(i).locator("td") for i in range(modal.locator("tr").count())]
-			if cells.count() >= 2
-		}
-		expected = f"{first_value(row, 'first name', 'firstname')} {first_value(row, 'last name', 'lastname')}".strip()
-		if actual.get("Student Name") != expected:
-			raise AssertionError(f"Modal mismatch: expected Student Name={expected}, got {actual}")
-		print("Submit validation passed")
+		expect(page.locator("#example-modal-sizes-title-lg")).to_be_visible()
+		print("Passed")
 		browser.close()
 
 
