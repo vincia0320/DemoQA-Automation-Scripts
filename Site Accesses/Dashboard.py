@@ -7,16 +7,14 @@ class DemoQASiteAccess:
         self.browser = self.playwright.chromium.launch(headless=False)
         self.page = self.browser.new_page()
 
-    def open_forms_page(self):
-        self.page.goto("https://demoqa.com/forms", wait_until="networkidle")
+    def open_dashboard_page(self):
+        self.page.goto("https://demoqa.com/", wait_until="networkidle")
         return self.page
 
     def close(self):
-        self.browser.close()
-        self.playwright.stop()
+        pass
 
 
 if __name__ == "__main__":
     site = DemoQASiteAccess()
-    site.open_forms_page()
-    site.close()
+    site.open_dashboard_page()
