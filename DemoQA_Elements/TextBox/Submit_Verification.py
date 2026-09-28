@@ -35,7 +35,7 @@ with sync_playwright() as playwright:
 		assert all(detail in result_text for detail in expected_details), (
 			f"Submitted details were missing from the result: {result_text}"
 		)
-		print("Test completed successfully")
+		print("\033[92mTest completed successfully\033[0m")
 
 	finally:
 		browser.close()
