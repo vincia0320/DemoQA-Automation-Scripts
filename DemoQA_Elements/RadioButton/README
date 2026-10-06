@@ -1,0 +1,12 @@
+Test Scenarios covered:
+
+Button_Functionality.py
+Title:
+    Verify if button functionabilities are working as intended
+
+Desc:
+    This covers the the workability of the radiobuttons. Verifies that all buttons are working and "You have Selected" will display the selected radio button
+
+Expected Result:
+    1. If "Yes" is selected, then "You have selected Yes" is displayed
+    2. If "Impressive" is selected, then "You have selected Impressive" is displayed
