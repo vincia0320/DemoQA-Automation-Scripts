@@ -10,3 +10,5 @@ Desc:
 Expected Result:
     1. If "Yes" is selected, then "You have selected Yes" is displayed
     2. If "Impressive" is selected, then "You have selected Impressive" is displayed
+
+UI_Verification.py
